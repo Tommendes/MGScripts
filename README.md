@@ -21,4 +21,4 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 
 In ./setup.ini, edit 
 - `@connString` IP or DNS(ex: localhost)
-- `@folderToBd` Path to Firebird file(c:/firebird/database.fdb)
+- `@folderToBd` Path to Firebird file(ex: c:/firebird/database.fdb)
