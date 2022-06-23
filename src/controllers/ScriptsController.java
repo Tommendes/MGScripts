@@ -9,7 +9,8 @@ import main.MGScript;
 
 /**
  *
- * @author TomMe
+ * @author Tom Mendes
+ * @email contato@tommendes.com.br
  */
 public class ScriptsController extends Thread {
 

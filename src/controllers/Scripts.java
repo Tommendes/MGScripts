@@ -1,5 +1,10 @@
 package controllers;
 
+/**
+ *
+ * @author Tom Mendes
+ * @email contato@tommendes.com.br
+ */
 public class Scripts {
 
     public Scripts() {

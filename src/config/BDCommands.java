@@ -15,7 +15,8 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author TomMe
+ * @author Tom Mendes
+ * @email contato@tommendes.com.br
  */
 public class BDCommands {
 

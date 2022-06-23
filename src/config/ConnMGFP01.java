@@ -15,7 +15,8 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author TomMe
+ * @author Tom Mendes
+ * @email contato@tommendes.com.br
  */
 public class ConnMGFP01 {
 

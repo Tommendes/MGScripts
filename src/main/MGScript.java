@@ -17,6 +17,11 @@ import config.BDCommands;
 import config.ConnMGFP01;
 import controllers.ScriptsController;
 
+/**
+ *
+ * @author Tom Mendes
+ * @email contato@tommendes.com.br
+ */
 public class MGScript {
 
 	private static BDCommands bDCommands;

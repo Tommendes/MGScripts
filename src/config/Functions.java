@@ -12,7 +12,8 @@ import java.util.regex.Pattern;
 
 /**
  *
- * @author TomMe
+ * @author Tom Mendes
+ * @email contato@tommendes.com.br
  */
 public class Functions {
 
