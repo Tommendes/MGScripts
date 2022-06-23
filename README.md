@@ -1,6 +1,6 @@
-## Getting Started
+## MGScripts
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+Java application coded in Visual Studio Code to execute Firebird(or other SGDB) scripts on demand.
 
 ## Folder Structure
 
@@ -15,4 +15,4 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 
 ## Dependency Management
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+[Your SGDB lib] jaybird-full-3.0.2.jar.
