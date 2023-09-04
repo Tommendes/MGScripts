@@ -9,9 +9,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import main.MGScripts;
 
 /**
  *
@@ -26,17 +29,28 @@ public class BDCommands {
         this.conn = conn;
     }
 
-    public void executeSql(String sql) {
+    public boolean executeSql(String sql) {
+        boolean exec = false;
         try {
             PreparedStatement ps;
             ps = this.conn.prepareStatement(sql);
-            ps.execute();
+            exec = ps.execute();
             ps.close();
+            exec = !exec;
+        } catch (SQLSyntaxErrorException e) {
+            // Captura a exceção SQLSyntaxErrorException
+            MGScripts.getTaMsgs().append("\n" + "Erro SQL: " + e.getMessage() + "\n");
+            MGScripts.getTaMsgs().append("Código de erro SQL: " + e.getErrorCode() + "\n");
+            MGScripts.getTaMsgs().append("Estado SQL: " + e.getSQLState() + "\n");
+            MGScripts.getTaMsgs().append("Localização do erro: linha " + e.getLocalizedMessage() + "\n");
         } catch (SQLException ex) {
+            MGScripts.getTaMsgs().append("\n" + "Erro ao executar a operação" + "\n");
+            MGScripts.getTaMsgs().append(ex.getMessage() + "\n");
             Logger.getLogger(BDCommands.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return exec;
     }
-    
+
     public ResultSet getTabelaGenerico(String tabela, String salto, String sqlAdd, String sqlRaw, boolean output) {
         ResultSet rs;
         try {

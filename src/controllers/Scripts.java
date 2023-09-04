@@ -18,7 +18,7 @@ public class Scripts {
      * @param i
      * @return
      */
-    public String _001(int i) {
+    public String _000(int i) {
         StringBuilder sb = new StringBuilder();
         if (i == 0) {
             sb.append("update FINANCEIRO F1 set").append(" ");
@@ -36,6 +36,35 @@ public class Scripts {
             sb.append("servidor começou a recebê-la").append("\n");
         }
         return sb.toString();
+    }
+    
+    /**
+     * Executa a correção do eSocial
+     * i = 0: script
+     * i = 1: texto
+     * 
+     * @param i
+     * @return
+     */
+    public String _001(int i) {
+    	StringBuilder sb = new StringBuilder();
+    	if (i == 0) {
+    		sb.append("update FINANCEIRO F ").append("\n");
+            sb.append("set N_VALOR = (N_VALOR + ?????) ").append("\n");
+            sb.append("where F.IDEVENTO = '998' and ").append("\n");
+            sb.append("      F.ANO = '2023' and ").append("\n");
+            sb.append("      F.MES = '??' and ").append("\n");
+            sb.append("      F.PARCELA = '000' and ").append("\n");
+            sb.append("      F.IDSERVIDOR = '????????'").append("\n");
+    	} else if (i == 1) {
+    		sb.append("1. Esta operação corrige pequenas diferenças no resultado do eSocial.").append("\n");
+    		sb.append("2. Selecione uma matrícula qualquer onde o desconto da rúbrica 998 ocorra normalmente.").append("\n");
+    		sb.append("3. A seguir, informe o valo a adicionar ou subtrairr na primeira ocorrência de ????? (N_VALOR).").append("\n");
+    		sb.append("4. ATENÇÃO!!! Valores decimais deverão ser informados com \".\"(ponto)").append("\n");
+    		sb.append("5. Confirme o exercício (Ano, Mês e Complementar).").append("\n");
+    		sb.append("6. Finalmente, execute a operação.");
+    	}
+    	return sb.toString();
     }
 
 }

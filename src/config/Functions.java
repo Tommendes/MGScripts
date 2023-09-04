@@ -58,7 +58,6 @@ public class Functions {
     }
 
     public String getMesExtenso(String mes) {
-        // System.out.println("Mês: " + mes);
         String extenso;
         switch (mes) {
             case "01":
