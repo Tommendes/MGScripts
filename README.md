@@ -1,24 +1,103 @@
-## MGScripts
+# MGScripts
 
-Java application coded in Visual Studio Code to execute Firebird(or other SGDB) scripts on demand.
+Aplicação Java desenvolvida no Visual Studio Code para executar scripts SQL em bancos Firebird (ou outros SGBDs compatíveis) sob demanda.
 
-## Folder Structure
+## Estrutura de Pastas
 
-The workspace contains two folders by default, where:
+- `src`: código-fonte da aplicação
+- `lib`: dependências (ex: jaybird-full-3.0.2.jar)
+- `bin`: arquivos compilados (gerados automaticamente)
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Pré-requisitos
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+- Java 8 ou superior instalado
+- Biblioteca do SGBD Firebird (`jaybird-full-3.0.2.jar`) na pasta `lib`
+- Arquivo `ScriptsRaw.zip` contendo os scripts `.sql` a serem executados, deve estar na raiz do projeto
+- Arquivo `setup.ini` na raiz do projeto, contendo:
+  - `@connString` IP ou DNS do servidor (ex: localhost)
+  - `@folderToBd` Caminho para o arquivo do banco Firebird (ex: c:/firebird/database.fdb)
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## Como Executar
 
-## Dependency Management
+1. **Descompacte** o projeto e coloque o arquivo `ScriptsRaw.zip` e o `setup.ini` na raiz do projeto.
+2. **Edite** o arquivo `setup.ini` conforme seu ambiente:
+   ```
+   @connString localhost
+   @folderToBd C:/caminho/para/seu/banco
+   ```
+3. **Compile** o projeto:
+   ```sh
+   javac -cp "lib/*" -d bin src/main/MGScripts.java
+   ```
+4. **Execute** a aplicação:
+   ```sh
+   java -cp "bin;lib/*" main.MGScripts
+   ```
+   > No Linux/Mac, troque `;` por `:` no classpath.
 
-[Your SGDB lib] jaybird-full-3.0.2.jar.
+## Funcionamento
 
-## SGDB Connection
+- O programa descompacta automaticamente o arquivo `ScriptsRaw.zip` para a pasta `ScriptsRaw`.
+- Todos os arquivos `.sql` encontrados em `ScriptsRaw` são executados no banco configurado.
+- Scripts executados são movidos para a pasta `ScriptsExecuted` (exceto os que começam com `#f-`, que permanecem em `ScriptsRaw`).
+- O histórico de execução é registrado na tabela `auxiliares` do banco.
 
-In ./setup.ini, edit 
-- `@connString` IP or DNS(ex: localhost)
-- `@folderToBd` Path to Firebird file(ex: c:/firebird/database.fdb)
+## Observações
+
+- O programa só permite conexão local (`localhost`) por segurança.
+- Certifique-se de que o banco Firebird esteja acessível e que o usuário/senha estejam corretos no (`sysdba/masterkey` por padrão).
+- Scripts já executados não serão executados novamente, a menos que sejam marcados como "forçados".
+
+---
+```<!-- filepath: c:\Fontes\JavaProjects\MGScripts\README.md -->
+# MGScripts
+
+Aplicação Java desenvolvida no Visual Studio Code para executar scripts SQL em bancos Firebird (ou outros SGBDs compatíveis) sob demanda.
+
+## Estrutura de Pastas
+
+- `src`: código-fonte da aplicação
+- `lib`: dependências (ex: jaybird-full-3.0.2.jar)
+- `bin`: arquivos compilados (gerados automaticamente)
+
+## Pré-requisitos
+
+- Java 8 ou superior instalado
+- Biblioteca do SGBD Firebird (`jaybird-full-3.0.2.jar`) na pasta `lib`
+- Arquivo `ScriptsRaw.zip` contendo os scripts `.sql` a serem executados, deve estar na raiz do projeto
+- Arquivo `setup.ini` na raiz do projeto, contendo:
+  - `@connString` IP ou DNS do servidor (ex: localhost)
+  - `@folderToBd` Caminho para o arquivo do banco Firebird (ex: c:/firebird/database.fdb)
+
+## Como Executar
+
+1. **Descompacte** o projeto e coloque o arquivo `ScriptsRaw.zip` e o `setup.ini` na raiz do projeto.
+2. **Edite** o arquivo `setup.ini` conforme seu ambiente:
+   ```
+   @connString localhost
+   @folderToBd C:/caminho/para/seu/banco
+   ```
+3. **Compile** o projeto:
+   ```sh
+   javac -cp "lib/*" -d bin src/main/MGScripts.java
+   ```
+4. **Execute** a aplicação:
+   ```sh
+   java -cp "bin;lib/*" main.MGScripts
+   ```
+   > No Linux/Mac, troque `;` por `:` no classpath.
+
+## Funcionamento
+
+- O programa descompacta automaticamente o arquivo `ScriptsRaw.zip` para a pasta `ScriptsRaw`.
+- Todos os arquivos `.sql` encontrados em `ScriptsRaw` são executados no banco configurado.
+- Scripts executados são movidos para a pasta `ScriptsExecuted` (exceto os que começam com `#f-`, que permanecem em `ScriptsRaw`).
+- O histórico de execução é registrado na tabela `auxiliares` do banco.
+
+## Observações
+
+- O programa só permite conexão local (`localhost`) por segurança.
+- Certifique-se de que o banco Firebird esteja acessível e que o usuário/senha estejam corretos no (`sysdba/masterkey` por padrão).
+- Scripts já executados não serão executados novamente, a menos que sejam marcados como "forçados".
+
+---
