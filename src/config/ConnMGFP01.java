@@ -14,17 +14,15 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Classe responsável por gerenciar a conexão com o banco de dados Firebird.
+ * Lê parâmetros do arquivo setup.ini e provê métodos para conectar e desconectar.
+ * 
  * @author Tom Mendes
  * @email contato@tommendes.com.br
  */
 public class ConnMGFP01 {
 
-    public ConnMGFP01(Connection connection) {
-        this.connection = connection;
-    }
-
-    // O endereço da base de dados
+    // Usuário e senha padrão do Firebird
     private static final String USER = "sysdba";
     private static final String PASSWORD = "masterkey";
     private static String ip;
@@ -32,7 +30,92 @@ public class ConnMGFP01 {
     private static String url;
     private Connection connection;
 
-    public ConnMGFP01() {
+    public ConnMGFP01() {}
+
+    public ConnMGFP01(Connection connection) {
+        this.connection = connection;
+    }
+
+    /**
+     * Lê o arquivo setup.ini e define IP e pasta do banco.
+     * Se não encontrar o arquivo, usa valores padrão.
+     */
+    public static void getHost() {
+        File iniFile = new File(System.getProperty("user.dir") + "/setup.ini");
+        try (Scanner myReader = new Scanner(iniFile)) {
+            String ipLine = myReader.hasNextLine() ? myReader.nextLine() : "";
+            String folderLine = myReader.hasNextLine() ? myReader.nextLine() : "";
+
+            if (ipLine.startsWith("@connString ")) {
+                setIp(ipLine.substring(12).trim());
+            } else {
+                setIp("localhost");
+            }
+
+            if (folderLine.startsWith("@folderToBd ")) {
+                setFolderToBd(folderLine.substring(12).trim());
+            } else {
+                setFolderToBd(System.getProperty("user.dir"));
+            }
+
+            System.out.println("Pasta do banco: " + getFolderToBd());
+            setUrl("jdbc:firebirdsql:" + getIp() + "/3050:" + getFolderToBd()
+                    + "/MGFP01.fdb?charSet=utf-8&defaultHoldable=true");
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "O sistema não pode encontrar o arquivo setup.ini");
+            System.err.println("Arquivo setup.ini não encontrado.");
+            setIp("localhost");
+            setFolderToBd(System.getProperty("user.dir"));
+            setUrl("jdbc:firebirdsql:" + getIp() + "/3050:" + getFolderToBd()
+                    + "/MGFP01.fdb?charSet=utf-8&defaultHoldable=true");
+        }
+    }
+
+    /**
+     * Conecta ao banco de dados Firebird usando os parâmetros lidos.
+     */
+    public void conectar() {
+        try {
+            getHost();
+            // Se IP != localhost, encerrar a aplicação
+            if (!getIp().equals("localhost")) {
+                mensagem("Conexão com IP diferente de localhost não é permitida.");
+                System.exit(1);
+            }
+            System.out.println("URL de conexão: " + getUrl());
+            mensagem("Conectar a: " + getUrl());
+            Class.forName("org.firebirdsql.jdbc.FBDriver");
+            Connection conn = DriverManager.getConnection(getUrl(), USER, PASSWORD);
+            this.setConnection(conn);
+            mensagem("Conectado");
+        } catch (ClassNotFoundException | SQLException e) {
+            mensagem("Erro ao conectar: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Desconecta do banco de dados, se estiver conectado.
+     */
+    public void desconectar() {
+        try {
+            mensagem("Desconectar");
+            if (this.getConnection() != null && !this.getConnection().isClosed()) {
+                this.getConnection().close();
+                mensagem("Desconectado");
+            }
+        } catch (SQLException e) {
+            mensagem("Erro ao desconectar: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Exibe e retorna uma mensagem.
+     * @param texto Mensagem a ser exibida.
+     * @return A própria mensagem.
+     */
+    public String mensagem(String texto) {
+        System.out.println(texto);
+        return texto;
     }
 
     public Connection getConnection() {
@@ -41,76 +124,6 @@ public class ConnMGFP01 {
 
     public void setConnection(Connection connection) {
         this.connection = connection;
-    }
-
-    public static void getHost() {
-        try {
-            File myObj = new File(System.getProperty("user.dir") + "/setup.ini");
-            try (Scanner myReader = new Scanner(myObj)) {
-                int i = 0;
-                while (myReader.hasNextLine()) {
-                    ++i;
-                    String data = myReader.nextLine();
-                    if (i == 1 && data.substring(0, 12).equals("@connString ")) {
-                        setIp(data.substring(12).trim());
-                    } else {
-                        setIp("localhost");
-                    }
-                    if (i == 2 && data.substring(0, 12).equals("@folderToBd ")) {
-                        setFolderToBd(data.substring(12).trim());
-                    } else {
-                        setFolderToBd(System.getProperty("user.dir"));
-                        // setFolderToBd("c:/windows/mgfolha");
-                    }
-                }
-                System.out.println(getFolderToBd());
-                setUrl("jdbc:firebirdsql:" + getIp() + "/3050:" + getFolderToBd()
-                        + "/MGFP01.fdb?charSet=utf-8&defaultHoldable=true");
-            }
-        } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(null, "O sistema não pode encontrar o arquivo setup.ini");
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Conectar ao BD
-     */
-    public void conectar() {
-        try {
-            getHost();
-            System.out.println(getUrl());
-            mensagem("Conectar a: " + getUrl());
-            Class.forName("org.firebirdsql.jdbc.FBDriver");
-            Connection conn = DriverManager.getConnection(getUrl(), USER, PASSWORD);
-            this.setConnection(conn);
-            mensagem("Conectado");
-        } catch (ClassNotFoundException | SQLException e) {
-            mensagem("Erro: " + e.getMessage());
-        } 
-    }
-
-    /**
-     * Desconectar do BD
-     */
-    public void desconectar() {
-        try {
-            mensagem("Desconectar");
-            if (!this.getConnection().isClosed()) {
-                this.getConnection().close();
-            }
-        } catch (SQLException e) {
-            mensagem("Erro: " + e.getMessage());
-        } finally {
-            mensagem("Desconectado");
-        }
-    }
-
-    public String mensagem(String texto) {
-        String ret = texto;
-        System.out.println(ret);
-        return ret;
     }
 
     public static String getIp() {
@@ -136,5 +149,4 @@ public class ConnMGFP01 {
     public static void setUrl(String url) {
         ConnMGFP01.url = url;
     }
-
 }

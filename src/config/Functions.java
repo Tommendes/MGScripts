@@ -5,28 +5,49 @@
  */
 package config;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
- *
+ * Classe utilitária com funções para manipulação de strings e datas.
+ * 
  * @author Tom Mendes
  * @email contato@tommendes.com.br
  */
 public class Functions {
 
-    public Functions() {
-    }
-
-    public String deAccent(String str) {
+    /**
+     * Remove acentos de uma string usando Normalizer.
+     * 
+     * @param str String de entrada.
+     * @return String sem acentos.
+     */
+    public static String deAccent(String str) {
+        if (str == null)
+            return "";
         String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(nfdNormalizedString).replaceAll("");
     }
 
-    public String removeAcentos(String string) {
+    /**
+     * Remove acentos de uma string usando substituições manuais.
+     * 
+     * @param string String de entrada.
+     * @return String sem acentos.
+     * @deprecated Prefira usar {@link #deAccent(String)} por ser mais eficiente e
+     *             abrangente.
+     */
+    @Deprecated
+    public static String removeAcentos(String string) {
         if (string != null && !string.isEmpty()) {
             string = string.replaceAll("[ÂÀÁÄÃ]", "A");
             string = string.replaceAll("[âãàáä]", "a");
@@ -50,6 +71,13 @@ public class Functions {
         return string;
     }
 
+    /**
+     * Adiciona meses a uma data.
+     * 
+     * @param date Data base.
+     * @param i    Quantidade de meses a adicionar (pode ser negativo).
+     * @return Nova data com os meses adicionados.
+     */
     public static Date addMonth(Date date, int i) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -57,53 +85,87 @@ public class Functions {
         return cal.getTime();
     }
 
-    public String getMesExtenso(String mes) {
-        String extenso;
+    /**
+     * Retorna o nome do mês por extenso a partir do número do mês.
+     * 
+     * @param mes String representando o mês ("01" a "13").
+     * @return Nome do mês por extenso, ou vazio se inválido.
+     */
+    public static String getMesExtenso(String mes) {
         switch (mes) {
             case "01":
-                extenso = "Janeiro";
-                break;
+                return "Janeiro";
             case "02":
-                extenso = "Fevereiro";
-                break;
+                return "Fevereiro";
             case "03":
-                extenso = "Março";
-                break;
+                return "Março";
             case "04":
-                extenso = "Abril";
-                break;
+                return "Abril";
             case "05":
-                extenso = "Maio";
-                break;
+                return "Maio";
             case "06":
-                extenso = "Junho";
-                break;
+                return "Junho";
             case "07":
-                extenso = "Julho";
-                break;
+                return "Julho";
             case "08":
-                extenso = "Agosto";
-                break;
+                return "Agosto";
             case "09":
-                extenso = "Setembro";
-                break;
+                return "Setembro";
             case "10":
-                extenso = "Outubro";
-                break;
+                return "Outubro";
             case "11":
-                extenso = "Novembro";
-                break;
+                return "Novembro";
             case "12":
-                extenso = "Dezembro";
-                break;
+                return "Dezembro";
             case "13":
-                extenso = "13º";
-                break;
+                return "13º";
             default:
-                extenso = "";
-                break;
+                return "";
         }
-        return extenso;
     }
 
+    /**
+     * Retorna o nome do mês por extenso a partir do número do mês.
+     * 
+     * @param mes Número do mês (1 a 13).
+     * @return Nome do mês por extenso, ou vazio se inválido.
+     */
+    public static String getMesExtenso(int mes) {
+        return getMesExtenso(String.format("%02d", mes));
+    }
+
+    /**
+     * Método para descompactação de arquivos ZIP.
+     * 
+     * @param zipFile Caminho do arquivo ZIP a ser descompactado.
+     * @param destDir Caminho do diretório de destino para os arquivos
+     *                descompactados.
+     */
+    public static void unzip(String zipFile, String destDir) {
+        // Implementação do método de descompactação
+        // Este método deve ser implementado conforme necessário
+        // Exemplo: usando java.util.zip para descompactar arquivos ZIP
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                File newFile = new File(destDir, entry.getName());
+                if (entry.isDirectory()) {
+                    newFile.mkdirs();
+                } else {
+                    // Cria diretórios pai, se necessário
+                    new File(newFile.getParent()).mkdirs();
+                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                        byte[] buffer = new byte[1024];
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer, 0, len);
+                        }
+                    }
+                }
+                zis.closeEntry();
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao descompactar arquivo ZIP: " + e.getMessage());
+        }
+    }
 }

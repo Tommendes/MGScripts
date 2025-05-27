@@ -39,13 +39,13 @@ public class BDCommands {
             exec = !exec;
         } catch (SQLSyntaxErrorException e) {
             // Captura a exceção SQLSyntaxErrorException
-            MGScripts.getTaMsgs().append("\n" + "Erro SQL: " + e.getMessage() + "\n");
-            MGScripts.getTaMsgs().append("Código de erro SQL: " + e.getErrorCode() + "\n");
-            MGScripts.getTaMsgs().append("Estado SQL: " + e.getSQLState() + "\n");
-            MGScripts.getTaMsgs().append("Localização do erro: linha " + e.getLocalizedMessage() + "\n");
+            System.out.println("\n" + "Erro SQL: " + e.getMessage());
+            System.out.println("Código de erro SQL: " + e.getErrorCode());
+            System.out.println("Estado SQL: " + e.getSQLState());
+            System.out.println("Localização do erro: linha " + e.getLocalizedMessage());
         } catch (SQLException ex) {
-            MGScripts.getTaMsgs().append("\n" + "Erro ao executar a operação" + "\n");
-            MGScripts.getTaMsgs().append(ex.getMessage() + "\n");
+            System.out.println("\n" + "Erro ao executar a operação");
+            System.out.println(ex.getMessage());
             Logger.getLogger(BDCommands.class.getName()).log(Level.SEVERE, null, ex);
         }
         return exec;
